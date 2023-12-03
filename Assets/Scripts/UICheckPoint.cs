@@ -19,10 +19,12 @@ public class UICheckPoint : MonoBehaviour
     GameObject numberCircle;
     [SerializeField]
     TextMeshProUGUI txtOrderNum;
+    [SerializeField]
+    GameObject errorNotification;
 
     private Camera cam;
     private CanvasGroup blinkCanvasGroup;
-    private Action<UICheckPoint> ButtonClickAction;
+    private Action<int> ButtonClickAction;
 
     private int orderNumber;
     public int OrderNumber { get { return orderNumber; } }
@@ -30,7 +32,7 @@ public class UICheckPoint : MonoBehaviour
     private bool isChecked;
     public bool IsChecked => isChecked;
     
-    public void InitializeCheckPoint(Camera cam, Transform target, int orderNumber, Action<UICheckPoint> btnClickedAction)
+    public void InitializeCheckPoint(Camera cam, Transform target, int orderNumber, Action<int> btnClickedAction)
     {
         this.cam = cam;
         this.orderNumber = orderNumber;
@@ -63,7 +65,7 @@ public class UICheckPoint : MonoBehaviour
     
     private void Blink()
     {
-        blinkCanvasGroup = blinkButton.GetComponent<CanvasGroup>();
+        blinkCanvasGroup = blinkButton.GetComponentInChildren<CanvasGroup>();
         if (blinkCanvasGroup != null)
         {
             Sequence sequence = DOTween.Sequence()
@@ -78,7 +80,27 @@ public class UICheckPoint : MonoBehaviour
     {
         if (!isChecked)
         {
-            ButtonClickAction(this);
+            ButtonClickAction(orderNumber);
         }
+    }
+
+    public void ShowError()
+    {
+        StartCoroutine(ShowErrorMsg());
+    }
+
+    private IEnumerator ShowErrorMsg()
+    {
+        blinkButton.SetActive(false);
+        errorNotification.SetActive(true);
+        CanvasGroup errorCanvas = errorNotification.GetComponentInChildren<CanvasGroup>();
+        Sequence sequence = DOTween.Sequence()
+            .Append(errorCanvas.DOFade(0, 0.1f))
+            .Append(errorCanvas.DOFade(1, 1))
+            .AppendInterval(1)
+            .Append(errorCanvas.DOFade(0, 1));
+        yield return new WaitForSeconds(3f);
+        blinkButton.SetActive(true);
+        errorNotification.SetActive(false);
     }
 }

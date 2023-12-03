@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.PlasticSCM.Editor.WebApi;
 using UnityEngine;
 
 public class AppManager : MonoBehaviour
@@ -13,6 +12,8 @@ public class AppManager : MonoBehaviour
     Transform transCanvas;
     [SerializeField]
     Camera cam;
+    [SerializeField]
+    CheckListHandler checkListHandler;
 
     private List<UICheckPoint> uiCheckPoints = new List<UICheckPoint>();
     private int currentPointNumber = 0;
@@ -40,22 +41,39 @@ public class AppManager : MonoBehaviour
         }
     }
 
-    public void OnCheckButtonClicked(UICheckPoint uiCheckPoint)
+    public void OnCheckButtonClicked(int orderNumber)
     {
-        if (uiCheckPoint == null)
+        if (uiCheckPoints == null)
         {
             return;
         }
-        if (uiCheckPoint.OrderNumber == currentPointNumber)
+        UICheckPoint uiCheckPoint = uiCheckPoints[orderNumber];
+        if (uiCheckPoints[orderNumber] == null)
+        {
+            return;
+        }
+
+        if (orderNumber == currentPointNumber)
         {
             uiCheckPoint.SetButton(true);
+            checkListHandler.OnListItemClickSuccess(orderNumber);
+            
             if (currentPointNumber < uiCheckPoints.Count - 1)
             {
                 currentPointNumber++;
             }
         } else
         {
-                
+            uiCheckPoint.ShowError();
+        }
+    }
+
+    public void Reset()
+    {
+        currentPointNumber = 0;
+        foreach (var checkpoint in uiCheckPoints)
+        {
+            checkpoint.SetButton(false);
         }
     }
 
