@@ -1,3 +1,9 @@
+/*************************************************
+ * Check List UI item container and handler script
+ * It receives the List UI Item click event and 
+ * send it to AppManager script. It also handles 
+ * Resetting Button Click event.
+************************************************/
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,6 +29,9 @@ public class CheckListHandler : MonoBehaviour
     List<CheckUIButton> checkUIButtons;
 
     private bool isFold = true;
+
+    // This function is used to fold and open the check list UI panel.
+    // The UI animation uses the DOTWEEN 
     public void FoldPanelOnOff()
     {
         isFold = !isFold;
@@ -41,16 +50,21 @@ public class CheckListHandler : MonoBehaviour
         }
     }
 
+    //If the CheckList UI Item is clicked it send the info to AppManager
     public void OnListItemClicked(int orderNum)
     {
         appManager.OnCheckButtonClicked(orderNum);
     }
 
+    //Receives the UI checklist item click result success from AppManager
+    // and send it to the correct Checklist item.
     public void OnListItemClickSuccess(int orderNum)
     {
         checkUIButtons[orderNum].SetChecked();
     }
 
+    //If Reset button is clicked it resets the check list UI items and 
+    // send the info to AppManager
     public void OnClickReset()
     {
         foreach (var uiItems in checkUIButtons)

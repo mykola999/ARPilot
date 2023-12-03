@@ -1,3 +1,9 @@
+/*****************************************
+ * It is the main manager script of the 
+ * project. It creates the check UI button objects,
+ * receives their click events and send the result to 
+ * CheckListHandler as well.
+ * *************************************/
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,6 +31,7 @@ public class AppManager : MonoBehaviour
         GenerateUIPoints();
     }
 
+    //Generate the UI buttons of the check points in the screen from the target positions array and uiCheckPoint Prefab.
     private void GenerateUIPoints()
     {
         uiCheckPoints.Clear();
@@ -41,6 +48,9 @@ public class AppManager : MonoBehaviour
         }
     }
 
+    //If both the Check UI button is clicked or CheckList UI item is clicked, this function is called.
+    //It checks the current order number and if the clicked object is correct one then inform the button
+    // click is correct for related UI objects.
     public void OnCheckButtonClicked(int orderNumber)
     {
         if (uiCheckPoints == null)
@@ -68,6 +78,7 @@ public class AppManager : MonoBehaviour
         }
     }
 
+    //Handles the reset with current point order number and all checkpoint UI objects.
     public void Reset()
     {
         currentPointNumber = 0;

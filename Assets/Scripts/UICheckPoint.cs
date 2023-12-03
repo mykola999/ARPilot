@@ -1,3 +1,8 @@
+/*********************************
+ * It is the script for the UI circle 
+ * buttons in the screen displaying the
+ * target positions of the checklist.
+ * *******************************/
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -56,13 +61,15 @@ public class UICheckPoint : MonoBehaviour
     {
         UpdateUIPosition();
     }
-
+    //Calculate and moves the UI object positions with the same as target 3d object by converting world position into screen position
     private void UpdateUIPosition()
     {
         Vector3 screenPos = cam.WorldToScreenPoint(targetObject.position);
         uiObject.position = screenPos;
     }
     
+    // It is the function of red circle button blinking animation.
+    // It uses the DOTWEEN sequence to repeating the color fade change of the canvas group.
     private void Blink()
     {
         blinkCanvasGroup = blinkButton.GetComponentInChildren<CanvasGroup>();
@@ -84,11 +91,13 @@ public class UICheckPoint : MonoBehaviour
         }
     }
 
+    //Shows the wrong position click UI notification
     public void ShowError()
     {
         StartCoroutine(ShowErrorMsg());
     }
 
+    //Same uses the DOTWEEN 
     private IEnumerator ShowErrorMsg()
     {
         blinkButton.SetActive(false);

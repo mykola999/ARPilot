@@ -1,3 +1,7 @@
+/********************************
+ * Check List UI button script
+ * 
+ * *****************************/
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
