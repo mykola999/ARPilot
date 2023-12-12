@@ -30,15 +30,18 @@ public class UICheckPoint : MonoBehaviour
     private Camera cam;
     private CanvasGroup blinkCanvasGroup;
     private Action<int> ButtonClickAction;
+    private AppManager appManager;
 
     private int orderNumber;
     public int OrderNumber { get { return orderNumber; } }
 
     private bool isChecked;
     public bool IsChecked => isChecked;
+
     
-    public void InitializeCheckPoint(Camera cam, Transform target, int orderNumber, Action<int> btnClickedAction)
+    public void InitializeCheckPoint(AppManager manager, Camera cam, Transform target, int orderNumber, Action<int> btnClickedAction)
     {
+        appManager = manager;
         this.cam = cam;
         this.orderNumber = orderNumber;
         targetObject = target;
@@ -59,7 +62,21 @@ public class UICheckPoint : MonoBehaviour
 
     private void Update()
     {
-        UpdateUIPosition();
+        if (appManager == null)
+        {
+            return;
+        }
+        if (appManager.HitFrontScreen)
+        {
+            UpdateUIPosition();
+            blinkButton.SetActive(!isChecked);
+            numberCircle.SetActive(isChecked);
+        } else
+        {
+            blinkButton.SetActive(false);
+            numberCircle.SetActive(false);
+        }
+
     }
     //Calculate and moves the UI object positions with the same as target 3d object by converting world position into screen position
     private void UpdateUIPosition()

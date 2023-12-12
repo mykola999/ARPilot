@@ -6,6 +6,7 @@
  * *************************************/
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class AppManager : MonoBehaviour
@@ -20,10 +21,20 @@ public class AppManager : MonoBehaviour
     Camera cam;
     [SerializeField]
     CheckListHandler checkListHandler;
+    [SerializeField]
+    private float hitDistance = 10f;
+    [SerializeField]
+    private string frontLayerName = "FrontDisplay";
 
     private List<UICheckPoint> uiCheckPoints = new List<UICheckPoint>();
     private int currentPointNumber = 0;
+
+    private Vector2 centerScreenPos = Vector2.zero;
+    private Vector2 centerLeftScreenPos = Vector2.zero;
+    private Vector2 centerRightScreenPos = Vector2.zero;
+
     public int CurrentPointNumber => currentPointNumber;
+    public bool HitFrontScreen = false;
 
     // Start is called before the first frame update
     void Start()
@@ -31,6 +42,39 @@ public class AppManager : MonoBehaviour
         GenerateUIPoints();
     }
 
+
+    void Update ()
+    {
+        CastRaysFromCamera();
+    }
+
+    private void CastRaysFromCamera()
+    {
+        int width = Screen.width;
+        int height = Screen.height;
+        bool centerHit = CastRayFromCamera(new Vector2(width / 2f, height / 2f));
+        bool leftHit = CastRayFromCamera(new Vector2(0f, height / 2f));
+        bool rightHit = CastRayFromCamera(new Vector2(width - 1f, height / 2f));
+
+        if (centerHit || leftHit || rightHit)
+        {
+            HitFrontScreen = true;
+        } else
+        {
+            HitFrontScreen = false;
+        }
+    }
+
+    private bool CastRayFromCamera(Vector2 screenPoint)
+    {
+        Ray ray = cam.ScreenPointToRay(screenPoint);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, hitDistance, LayerMask.GetMask(frontLayerName)))
+        {
+            return true;
+        }
+        return false;
+    }
     //Generate the UI buttons of the check points in the screen from the target positions array and uiCheckPoint Prefab.
     private void GenerateUIPoints()
     {
@@ -42,7 +86,7 @@ public class AppManager : MonoBehaviour
             UICheckPoint uiCheckPoint = objUiPoint.GetComponent<UICheckPoint>();
             if (uiCheckPoint != null)
             {
-                uiCheckPoint.InitializeCheckPoint(cam, targetPositions[i], i, OnCheckButtonClicked);
+                uiCheckPoint.InitializeCheckPoint(this, cam, targetPositions[i], i, OnCheckButtonClicked);
             } 
             uiCheckPoints.Add(uiCheckPoint);
         }
